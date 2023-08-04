@@ -1,5 +1,5 @@
 .contenedor{
-    background-color: hsl(190, 25%, 95%);
+    background-color: rgb(225, 225, 225);
     
 }
 * {
@@ -9,6 +9,7 @@
 card {
     text-align: center;
 }
+
 
 .form{
 
@@ -39,7 +40,7 @@ card {
 }
 
 .left-pan i{
-   
+
    padding-left: 10px;
 }
 
@@ -56,4 +57,7 @@ card {
     border:none;
 }
 
+#icono-izquierda {
+    text-align: left;
+}
 

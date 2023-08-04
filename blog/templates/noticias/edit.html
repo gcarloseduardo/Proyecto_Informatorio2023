@@ -1,23 +1,20 @@
 {% extends 'base.html' %}
 {% load static %}
 
+{% extends 'base.html' %}
+{% load static %}
+
 
 {% block contenido %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Editar comentario</title>
-</head>
-<body>
-    <h1>Editar comentario</h1>
-    <form method="post">
-        {% csrf_token %}
-        <textarea name="texto" rows="4" cols="50">{{ comment.texto}}</textarea>
-        <br>
-        <input type="submit" value="Guardar">
-    </form>
-</body>
-</html>
+<h1>Editar Comentario</h1>
+<br>
+<form method="post">
+    {% csrf_token %}
+    <textarea name="texto" rows="4" cols="50">{{ comment.texto }}</textarea>
+    <br>
+    <div><input type="submit" value="Guardar cambios">  <button type="button" class="btn btn-primary"><a class="nav-link" href="{% url 'noticias:detalle' noticia.pk %}">Cancelar y volver</a></button></div>
+</form>
+
 
 {% endblock contenido %}

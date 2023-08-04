@@ -21,6 +21,8 @@ urlpatterns = [
     path('<int:pk>/delete/', views.CommentDeleteView.as_view(), name='comment_delete'),
     path('<int:pk>/edit/', views.Editcomentario.as_view(), name='comment_edit'),
 
+    # URLS noticias
+
     path('add_noticia', views.agregar_noticia, name='agregar_noticia'),
     path('<int:pk>/del_noticia', views.eliminar_noticia, name='eliminar_noticia'),
     path('<int:pk>/editar_noticia', views.editar_noticia, name='editar_noticia'),

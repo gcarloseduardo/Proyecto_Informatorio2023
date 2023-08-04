@@ -4,20 +4,15 @@
 
 {% block contenido %}
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Eliminar comentario</title>
-</head>
-<body>
-    <h1>Eliminar comentario</h1>
-    <p>¿Enserio quieres eliminar este comentario?</p>
-    <p>{{ Comentario.texto }}</p>
+<h1>Eliminar Comentario</h1>
+<br>
+<p>¿Enserio quieres eliminar este comentario?</p>
+<p>{{ comment.texto }}</p>
     <form method="post">
         {% csrf_token %}
-        <input type="submit" value="Eliminar">
+        <br>
+        <div><input type="submit" value="Eliminar">  <button type="button" class="btn btn-primary"><a class="nav-link" href="{% url 'noticias:detalle' noticia.pk %}">Cancelar y volver</a></button></div>
     </form>
-</body>
-</html>
+
 
 {% endblock contenido %}
