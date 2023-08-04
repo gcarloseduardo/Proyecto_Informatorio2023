@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo%}Noticia{%endblock titulo%}
+
+{% block contenido%}
+{% if user.is_superuser or user.is_staff %}
+    <button type="button" class="btn btn-primary"><a class="nav-link" href="{% url 'noticias:editar_noticia' noticia.pk %}"> editar noticia</a></button>
+    <hr>
+{% endif %}
+<h1>{{noticia}}</h1>
+<img src="{{noticia.imagen.url}}" alt="" width="300">
+<p>{{noticia.cuerpo}}</p>
+<p>Fecha de publicación: {{noticia.fecha}}</p>
+<p>Categoria: {{noticia.categoria_noticia}}</p>
+
+
+
+<br>
+<hr>
+{% if user.is_authenticated %}
+    <h3>Comentá algo aquí</h3>
+    <form action="{% url 'noticias:comentar' %}" method="post">{% csrf_token %}
+
+    <textarea name="comentario" cols="30" rows="3"></textarea>
+    <input type="text" name="id_noticia" value="{{ noticia.pk }}" hidden="">
+    <input type="submit" value="comentar">
+    </form>
+    <h3>Comentarios</h3>
+    {% for com in comentarios %}
+    <div class="contenedor">
+    <div class="row mb-2">
+        <div class="col-md-16">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-8 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+                    <strong class="d-inline-block mb-2 text-primary-emphasis"> Usuario: {{ com.usuario }} 
+                    </strong>
+                    <h3 class="mb-0"><strong> comentó: {{ com.texto }}</strong></h3>
+                    <div class="mb-1 text-body-secondary"> Fecha del comentario: {{ com.fecha }}</div>
+
+                {% if user == com.usuario or user.is_staff %}
+                <a class="dropdown-item" href="{% url 'noticias:comment_edit' com.pk %}">Editar</a>
+                <a class="dropdown-item" href="{% url 'noticias:comment_delete' com.pk %}">Eliminar</a>
+                {% endif %}
+                </div>
+            </div>
+    <title>Placeholder</title>
+    {% endfor %}
+    </div>
+{% else %}
+    <h3>Si deseas comentar el árticulo, debes estar logueado</h3>
+    <button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'login' %}?next={{ request.path }}" class="nav-link px-2">Login</a></button>
+        
+     
+        
+<br>
+<hr>
+{% endif %}
+</div>
+<hr>
+{% if user.is_superuser or user.is_staff %}
+<button type="button" class="btn btn-outline-primary me-2"><a href="{% url 'noticias:eliminar_noticia' noticia.pk %}"> eliminar noticia</a></button>
+{% endif %}  
+{% endblock contenido%}

@@ -1,0 +1,13 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block titulo%} Noti {%endblock titulo%}
+
+{% block contenido%}
+{{ form.errors }}
+<form action="" method="post" enctype="multipart/form-data">{% csrf_token %}<!-- el  enctype="multipart/form-data" es para admsitir el envío de archivos o imagenes, que se estan incluyendo en el formulario -->
+    {{ form.as_p }}
+    <input type="submit">
+</form>
+
+{% endblock contenido%}

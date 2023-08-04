@@ -1,0 +1,127 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block contenido%}
+<aside>
+    <div class="p-4">
+        <h3 class="fst-italic">Categorias</h3>
+        <ol class="list-unstyled mb-0">
+
+            <li><a href="{% url 'noticias:inicio' %}"> Todas</a></li>
+            <li>{% for c in categorias %}
+                <a href="?id={{c.pk}}" name="id" value="{{ request.GET.id }} ">{{c.nombre}} </a>
+                {% endfor %}
+            </li>
+        </ol>
+    </div>
+    </div>
+</aside>
+</div>
+{% if user.is_superuser or user.is_staff %}
+<hr>
+<button type="button" class="btn btn-primary"><a class="nav-link" href="{% url 'noticias:agregar_noticia' %}"> Agregar Noticia</a></button>
+{% endif %}
+<hr>
+
+{% block barra_busqueda %}
+    
+    <div class="container">
+
+        <div class="row height d-flex justify-content-center align-items-center">
+
+          <div class="col-md-6">
+            <form method="get">
+
+                <div class="form">
+                  <i class="fa fa-search"></i>
+                  Buscar Noticias<input type="text" class="form-control form-input" placeholder="Buscar..." name = "buscar" value = "{{ request.GET.buscar }}"> 
+                  <span class="left-pan"></i></span>
+                </div>
+            </form>
+          </div>
+          
+        </div>
+        
+      </div>
+{% endblock barra_busqueda %}
+
+{% block titulo%} Noticias {% endblock titulo %}
+    <div>
+    {% block filtros %}
+    <a href="{% url 'noticias:inicio' %}?fecha=asc " >Más antiguas</a>
+    
+    <a href="{% url 'noticias:inicio' %}?fecha=des " >Más actuales</a>
+    
+    <a href="{% url 'noticias:inicio' %}?orden=asc " >De A a Z</a>
+    
+    <a href="{% url 'noticias:inicio' %}?orden=des " >De Z a A</a>
+    {% endblock filtros %}
+    
+     </div>
+
+    {% for noticia in noticias %}
+    <div class="contenedor">
+    <div class="row mb-2">
+        <div class="col-md-16">
+            <div class="row g-0 border rounded overflow-hidden flex-md-row mb-8 shadow-sm h-md-250 position-relative">
+                <div class="col p-4 d-flex flex-column position-static">
+                    <strong class="d-inline-block mb-2 text-primary-emphasis">{{noticia.categoria_noticia}}</strong>
+                    <h3 class="mb-0"><strong>{{ noticia.titulo }}</strong></h3>
+                    <div class="mb-1 text-body-secondary">{{noticia.fecha}}</div>
+                    <p class="card-text mb-auto">{{ noticia.cuerpo|slice:250 }}...</p>
+                    <a href="{% url 'noticias:detalle' noticia.pk %}"
+                        class="icon-link gap-1 icon-link-hover stretched-link">
+                        Seguir leyendo...
+                        <svg class="bi">
+                            <use xlink:href="#chevron-right"></use>
+                        </svg>
+                    </a>
+                </div>
+                <div class="col-auto d-none d-lg-block">
+                    <img class="bd-placeholder-img" src="{{ noticia.imagen.url }}" width="400" height="250"
+                        xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
+                        preserveAspectRatio="xMidYMid slice" focusable="false">
+
+                    <title>Placeholder</title>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+
+<!-- boton de subida -->
+<hr>
+
+  <button   id="btnVolverArriba" justify-content-center  width="52" height="52" class="btn btn-primary" style="display: none;">Volver arriba</button>
+
+  <script>
+    // Obtener el botón y el evento scroll
+    const btnVolverArriba = document.getElementById('btnVolverArriba');
+    window.addEventListener('scroll', () => {
+        if (window.pageYOffset > 100) {
+            // Mostrar el botón cuando el desplazamiento sea mayor a 100px
+            btnVolverArriba.style.display = 'block';
+        } else {
+            // Ocultar el botón cuando el desplazamiento sea menor o igual a 100px
+            btnVolverArriba.style.display = 'none';
+        }
+    });
+
+
+     // Función para volver arriba cuando se hace clic en el botón
+    btnVolverArriba.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth' // Desplazamiento suave (smooth)
+        });
+    });
+
+
+    </script>
+
+
+
+{% endblock contenido%}

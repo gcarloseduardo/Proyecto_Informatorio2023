@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block contenido %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Eliminar noticia</title>
+</head>
+<body>
+    <h1>Eliminar noticia</h1>
+    <p>¿Enserio quieres eliminar esta noticia?</p>
+    <p>{{ noti.titulo }}</p>
+    <form method="post">
+        {% csrf_token %}
+        <input type="submit" value="Eliminar">
+
+    </form>
+    <a href="{% url 'noticias:detalle' noticia.pk %}">Cancelar y volver al detalle de la noticia</a>
+</body>
+</html>
+
+{% endblock contenido %}

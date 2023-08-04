@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% load static %}
+
+
+{% block contenido %}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Editar comentario</title>
+</head>
+<body>
+    <h1>Editar comentario</h1>
+    <form method="post">
+        {% csrf_token %}
+        <textarea name="texto" rows="4" cols="50">{{ comment.texto}}</textarea>
+        <br>
+        <input type="submit" value="Guardar">
+    </form>
+</body>
+</html>
+
+{% endblock contenido %}
