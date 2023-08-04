@@ -161,7 +161,7 @@ def inicio(request):
 
 
     if queryset_categoria:
-        n = Noticia.objects.filter(categoria_noticia=queryset_categoria)
+        n = Noticia.objects.filter(categoria_noticia=queryset_categoria).order_by('-fecha')
         noticias = n
         contexto['noticias']= noticias
         cat = Categoria.objects.filter(id=queryset_categoria)
@@ -173,7 +173,7 @@ def inicio(request):
         Q(titulo__icontains = queryset_buscar) |
         Q(cuerpo__icontains = queryset_buscar) |            
         Q(categoria_noticia__nombre = queryset_buscar)
-        ).distinct()
+        ).distinct().order_by('-fecha')
         contexto['noticias']= noticias
         return render(request, 'noticias/inicio.html',contexto)
         
@@ -198,7 +198,7 @@ def inicio(request):
         return render(request, 'noticias/inicio.html',contexto)
 
     else:
-        noticias = Noticia.objects.all()
+        noticias = Noticia.objects.all().order_by('-fecha')
         contexto['noticias']= noticias
         cat = Categoria.objects.all()
         contexto['categorias'] = cat
