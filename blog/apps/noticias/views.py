@@ -44,8 +44,8 @@ def inicio(request):
     orden = request.GET.get('orden')
     if queryset:
         n = Noticia.objects.filter(
-            Q(tituloicontains = queryset) |
-            Q(cuerpoicontains = queryset) |
+            Q(titulo_icontains = queryset) |
+            Q(cuerpo_icontains = queryset) |
             Q(categoria_noticia__nombre = queryset)
         ).distinct().order_by('-fecha')[0:2]
 
@@ -64,61 +64,6 @@ def inicio(request):
         cat = Categoria.objects.all()
         filtrar_noticia(fecha, orden, contexto)['categorias'] = cat
         return render(request, 'noticias/inicio.html', contexto)
-
-# def inicio(request):
-#     contexto = {}
-#     queryset_buscar = request.GET.get("buscar") 
-#     queryset_fecha = request.GET.get('fecha')
-#     queryset_orden = request.GET.get('orden')
-#     queryset_categoria = request.GET.get('id')
-    
-
-#     if queryset_categoria:
-#         n = Noticia.objects.filter(categoria_noticia=queryset_categoria).order_by('-fecha')
-#         noticias = n
-#         contexto['noticias']= noticias
-#         cat = Categoria.objects.filter(id=queryset_categoria)
-#         contexto['categorias']= cat
-#         return render(request, 'noticias/inicio.html',contexto)
-
-#     elif queryset_buscar:
-#         noticias = Noticia.objects.filter(
-#         Q(tituloicontains = queryset_buscar) |
-#         Q(cuerpoicontains = queryset_buscar) |
-#         Q(categoria_noticia__nombre = queryset_buscar)
-#         ).distinct()
-#         contexto['noticias']= noticias
-#         return render(request, 'noticias/inicio.html',contexto)
-
-    
-       
-
-#     elif queryset_fecha == 'asc':
-#         noticias = Noticia.objects.order_by('fecha')
-#         contexto['noticias']= noticias
-#         return render(request, 'noticias/inicio.html',contexto)
-
-#     elif queryset_fecha == 'des':
-#         noticias = Noticia.objects.order_by('-fecha')
-#         contexto['noticias']= noticias
-#         return render(request, 'noticias/inicio.html',contexto)
-
-#     elif queryset_orden == 'asc':
-#         noticias = Noticia.objects.order_by('titulo')
-#         contexto['noticias']= noticias
-#         return render(request, 'noticias/inicio.html',contexto)
-
-#     elif queryset_orden == 'des':
-#         noticias = Noticia.objects.order_by('-titulo')
-#         contexto['noticias']= noticias
-#         return render(request, 'noticias/inicio.html',contexto)
-
-#     else:
-#         noticias = Noticia.objects.all() 
-#         contexto['noticias']= noticias
-#         cat = Categoria.objects.all()
-#         contexto['categorias'] = cat
-#         return render(request, 'noticias/inicio.html',contexto)
 
  
 # @login_required
