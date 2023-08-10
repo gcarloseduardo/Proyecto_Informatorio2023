@@ -64,7 +64,7 @@
 <hr>
 
 {% for noticia in noticias %}
-    <div class="contenedor">
+    
     <div class="row mb-2">
         <div class="col-md-16">
             <div class="row g-0 border rounded overflow-hidden flex-md-row mb-8 shadow-sm h-md-250 position-relative">
@@ -82,9 +82,11 @@
                     </a>
                 </div>
                 <div class="col-auto d-none d-lg-block">
-                    <img class="bd-placeholder-img" src="{{ noticia.imagen.url }}" width="400" height="250"
+                    <div class="contenedor">
+                        <img class="bd-placeholder-img" src="{{ noticia.imagen.url }}" width="400" height="250"
                         xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
                         preserveAspectRatio="xMidYMid slice" focusable="false">
+                    </div>
 
                     <title>Placeholder</title>
 

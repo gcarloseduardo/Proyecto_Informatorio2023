@@ -44,8 +44,8 @@ def inicio(request):
     orden = request.GET.get('orden')
     if queryset:
         n = Noticia.objects.filter(
-            Q(titulo_icontains = queryset) |
-            Q(cuerpo_icontains = queryset) |
+            Q(titulo__icontains = queryset) |
+            Q(cuerpo__icontains = queryset) |
             Q(categoria_noticia__nombre = queryset)
         ).distinct().order_by('-fecha')[0:2]
 
