@@ -47,7 +47,7 @@ def inicio(request):
             Q(titulo__icontains = queryset) |
             Q(cuerpo__icontains = queryset) |
             Q(categoria_noticia__nombre = queryset)
-        ).distinct().order_by('-fecha')[0:2]
+        ).distinct().order_by('-fecha')
 
         filtrar_noticia(fecha, orden, contexto)['noticias'] = n
 
@@ -56,14 +56,16 @@ def inicio(request):
         id_categoria = request.GET.get('id', None)
         if id_categoria:
             n = Noticia.objects.filter(categoria_noticia=id_categoria).order_by('-fecha')
+            filtrar_noticia(fecha, orden, contexto)['noticias'] = n
+            return render(request, 'noticias/inicio.html', contexto)
      
 
         else:
             n = Noticia.objects.all().order_by('-fecha') # una lista
-        filtrar_noticia(fecha, orden, contexto)['noticias'] = n
-        cat = Categoria.objects.all()
-        filtrar_noticia(fecha, orden, contexto)['categorias'] = cat
-        return render(request, 'noticias/inicio.html', contexto)
+            filtrar_noticia(fecha, orden, contexto)['noticias'] = n
+            cat = Categoria.objects.all()
+            filtrar_noticia(fecha, orden, contexto)['categorias'] = cat
+            return render(request, 'noticias/inicio.html', contexto)
 
  
 # @login_required
@@ -103,7 +105,7 @@ def Comentar_Noticia(request):
     noti = request.POST.get('id_noticia', None)
     noticia = Noticia.objects.get(pk=noti)
     coment = Comentario.objects.create(
-        usuario=user, noticia=noticia, texto=comentario)
+    usuario=user, noticia=noticia, texto=comentario)
     return redirect(reverse_lazy('noticias:detalle', kwargs={"pk": noti}))
 
 
