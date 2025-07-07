@@ -1,70 +1,64 @@
 {% extends 'base.html' %}
 {% load static %}
+{% load noticias_filters %}
 
 {% block titulo%} noticias {% endblock titulo %}
 
 {% block contenido%}
 
 {% block barra_busqueda %}
-
     <div class="container">
-
         <div class="row height d-flex justify-content-center align-items-center">
-
-          <div class="col-md-6">
-            <form method="get">
-
-                <div class="form">
-                  <i class="fa fa-search"></i>
-                  <input type="text" class="form-control form-input" placeholder="Buscar..." name = "buscar" value = "{{ request.GET.buscar }}">
-                  <span class="left-pan"></i></span>
-                </div>
-            </form>
-          </div>
-
+            <div class="col-md-6">
+                <form method="get">
+                    <div class="form">
+                        <i class="fa fa-search"></i>
+                        <input type="text" class="form-control form-input" placeholder="Buscar..." name="buscar" value="{{ request.GET.buscar|default:'' }}">
+                        <span class="left-pan"></i></span>
+                    </div>
+                </form>
+            </div>
         </div>
-
-      </div>
+    </div>
 {% endblock barra_busqueda %}
-      
+
 <aside>
     <div class="p-4">
         <h3 class="fst-italic">Categorias</h3>
-        <ol class="list-unstyled mb-0">
-
-            <li><a href="{% url 'noticias:inicio' %}"> Todas</a></li>
-            <li>{% for c in categorias %}
-                <a href="?id={{c.pk}}">{{c.nombre}}</a>
-                {% endfor %}
+        <ul class="list-inline mb-0">
+            <li class="list-inline-item">
+                {# "Todas" link: should clear ALL filters #}
+                <a href="{% url 'noticias:inicio' %}">Todas</a>
             </li>
-        </ol>
-    </div>
+            {% for c in categorias %}
+                <li class="list-inline-item">
+                    {# Use url_with_new_params to set 'id' and preserve others #}
+                    {# If you want to clear 'buscar', 'fecha', 'orden' when selecting a category, add them to the tag with value='' or None #}
+                    <a href="{% url 'noticias:inicio' %}?{% url_with_new_params id=c.pk %}">
+                        {{ c.nombre }}
+                    </a>
+                </li>
+            {% endfor %}
+        </ul>
     </div>
 </aside>
-</div>
 
 {% if user.is_superuser or user.is_staff %}
-
     <hr>
     <button type="button" class="btn btn-primary"><a class="nav-link" href="{% url 'noticias:agregar_noticia' %}"> Agregar Noticia</a></button>
-
 {% endif %}
-
 
 <hr>
 
-<a href="{% url 'noticias:inicio' %}?fecha=asc ">Más antiguas</a>
-
-<a href="{% url 'noticias:inicio' %}?fecha=des ">Más actuales</a>
-
-<a href="{% url 'noticias:inicio' %}?orden=asc ">De A a Z</a>
-
-<a href="{% url 'noticias:inicio' %}?orden=des ">De Z a A</a>
+{# ORDERING LINKS: Use url_with_new_params to set sort order and preserve other parameters #}
+<a href="{% url 'noticias:inicio' %}?{% url_with_new_params fecha='asc' %}">Más antiguas</a>
+<a href="{% url 'noticias:inicio' %}?{% url_with_new_params fecha='des' %}">Más actuales</a>
+<a href="{% url 'noticias:inicio' %}?{% url_with_new_params orden='asc' %}">De A a Z</a>
+<a href="{% url 'noticias:inicio' %}?{% url_with_new_params orden='des' %}">De Z a A</a>
 
 <hr>
 
 {% for noticia in noticias %}
-    
     <div class="row mb-2">
         <div class="col-md-16">
             <div class="row g-0 border rounded overflow-hidden flex-md-row mb-8 shadow-sm h-md-250 position-relative">
@@ -87,47 +81,32 @@
                         xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Placeholder: Thumbnail"
                         preserveAspectRatio="xMidYMid slice" focusable="false">
                     </div>
-
                     <title>Placeholder</title>
-
                 </div>
-
             </div>
         </div>
     </div>
-</div>
 {% endfor %}
 
-
-<!-- boton de subida -->
 <hr>
+<button id="btnVolverArriba" width="52" height="52" class="btn btn-primary" >Volver arriba</button>
 
-  <button  id="btnVolverArriba" width="52" height="52" class="btn btn-primary" >Volver arriba</button>
-
-  <script>
-    // Obtener el botón y el evento scroll
+<script>
     const btnVolverArriba = document.getElementById('btnVolverArriba');
     window.addEventListener('scroll', () => {
         if (window.pageYOffset > 100) {
-            // Mostrar el botón cuando el desplazamiento sea mayor a 100px
             btnVolverArriba.style.display = 'block';
         } else {
-            // Ocultar el botón cuando el desplazamiento sea menor o igual a 100px
             btnVolverArriba.style.display = 'none';
         }
     });
 
-
-     // Función para volver arriba cuando se hace clic en el botón
     btnVolverArriba.addEventListener('click', () => {
         window.scrollTo({
             top: 0,
-            behavior: 'smooth' // Desplazamiento suave (smooth)
+            behavior: 'smooth'
         });
     });
-
-
-    </script>
-
+</script>
 
 {% endblock contenido%}

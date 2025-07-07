@@ -18,56 +18,59 @@ from django.views import View
 
 # uso de decorador para verificar logeo de usuario y poder ver noticia
 # @login_required
-def filtrar_noticia(fecha, orden, contexto):
-    if fecha == 'asc':
-        noticias = Noticia.objects.all().order_by('fecha')
-        contexto['noticias'] = noticias
-
-    elif fecha == 'des':
-        noticias= Noticia.objects.all().order_by('-fecha')
-        contexto['noticias'] = noticias
-
-
-    if orden == 'asc':
-        noticias = Noticia.objects.all().order_by('titulo')
-        contexto['noticias'] = noticias
-
-    elif orden == 'des':
-        noticias = Noticia.objects.all().order_by('-titulo')
-        contexto['noticias'] = noticias
-    return contexto
-
 def inicio(request):
     contexto = {}
-    queryset = request.GET.get("buscar") 
-    fecha = request.GET.get('fecha')
-    orden = request.GET.get('orden')
-    if queryset:
-        n = Noticia.objects.filter(
-            Q(titulo__icontains = queryset) |
-            Q(cuerpo__icontains = queryset) |
-            Q(categoria_noticia__nombre = queryset)
-        ).distinct().order_by('-fecha')
+    queryset_search = request.GET.get("buscar")
+    id_categoria = request.GET.get('id')
+    fecha_param = request.GET.get('fecha')
+    orden_param = request.GET.get('orden')
 
-        filtrar_noticia(fecha, orden, contexto)['noticias'] = n
+    # 1. Start with all news.
+    base_noticias_qs = Noticia.objects.all()
 
-        return render(request, 'noticias/inicio.html',contexto)
-    else:
-        id_categoria = request.GET.get('id', None)
-        if id_categoria:
-            n = Noticia.objects.filter(categoria_noticia=id_categoria).order_by('-fecha')
-            filtrar_noticia(fecha, orden, contexto)['noticias'] = n
-            return render(request, 'noticias/inicio.html', contexto)
-     
+    # 2. Apply search filter if 'buscar' parameter is present.
+    if queryset_search:
+        base_noticias_qs = base_noticias_qs.filter(
+            Q(titulo__icontains=queryset_search) |
+            Q(cuerpo__icontains=queryset_search) |
+            Q(categoria_noticia__nombre__icontains=queryset_search)
+        ).distinct()
 
-        else:
-            n = Noticia.objects.all().order_by('-fecha') # una lista
-            filtrar_noticia(fecha, orden, contexto)['noticias'] = n
-            cat = Categoria.objects.all()
-            filtrar_noticia(fecha, orden, contexto)['categorias'] = cat
-            return render(request, 'noticias/inicio.html', contexto)
+    # 3. Apply category filter if 'id' parameter is present.
+    # This 'if' (not 'elif') ensures it chains with the search filter if both are there.
+    if id_categoria:
+        base_noticias_qs = base_noticias_qs.filter(categoria_noticia=id_categoria)
 
- 
+    # 4. Apply a default ordering. This is the fallback if no 'fecha' or 'orden'
+    # parameters are provided in the URL, or if 'filtrar_noticia' doesn't apply a new order.
+    base_noticias_qs = base_noticias_qs.order_by('-fecha')
+
+    # 5. Pass the already filtered (by search/category) queryset to 'filtrar_noticia'
+    # for further ordering based on 'fecha_param' or 'orden_param'.
+    final_noticias_qs = filtrar_noticia(base_noticias_qs, fecha_param, orden_param)
+
+    contexto['noticias'] = final_noticias_qs
+    contexto['categorias'] = Categoria.objects.all()
+
+    return render(request, 'noticias/inicio.html', contexto)
+
+def filtrar_noticia(noticias_queryset, fecha_param, orden_param):
+    # This function should ONLY modify the 'noticias_queryset' that's passed to it.
+    # It must NOT start a new query with Noticia.objects.all().
+
+    # Prioritize ordering by title if 'orden_param' is provided.
+    # If both 'fecha_param' and 'orden_param' are present, 'orden_param' will take precedence.
+    if orden_param == 'asc':
+        noticias_queryset = noticias_queryset.order_by('titulo')
+    elif orden_param == 'des':
+        noticias_queryset = noticias_queryset.order_by('-titulo')
+    # If 'orden_param' was NOT provided, then check for 'fecha_param'.
+    elif fecha_param == 'asc':
+        noticias_queryset = noticias_queryset.order_by('fecha')
+    elif fecha_param == 'des':
+        noticias_queryset = noticias_queryset.order_by('-fecha')
+
+    return noticias_queryset # Return the modified (ordered) queryset
 # @login_required
 def Detalle_Noticias(request, pk):
     contexto = {}
